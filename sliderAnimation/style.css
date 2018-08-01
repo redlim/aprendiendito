@@ -1,0 +1,26 @@
+body {
+    margin: 0;
+    color: white;
+    font-family: Arial, Helvetica, sans-serif;
+}
+.main-container {
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: 3fr 1fr;
+    height: 100vh;
+}
+.upper-container {
+    position: relative;
+    background: linear-gradient(to bottom right, #5564C2, #3A2E8D);
+}
+.lower-container {
+    background-color: #12132C;
+}
+.temperature-text {
+    position: absolute;
+    bottom: 150px;
+    font-size: 100px;
+    width: 100%;
+    text-align: center;
+    user-select: none;
+}
