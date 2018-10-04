@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.1/css/bulma.min.css">
+    <title>D3 + d3fc</title>
+</head>
+<body>
+<section class="section">
+    <div class="container">
+        <h1 class="title">
+            D3js +
+        </h1>
+        <p class="subtitle">
+            My first website with <strong>Bulma</strong>!
+        </p>
+    </div>
+    <div class="container">
+        <div id="chart-element" style="height: 500px"></div>
+    </div>
+</section>
+<script src="libraries/d3.v5.js"></script>
+<script src="libraries/d3fc.min.js"></script>
+<script>
+    const loadDataEndOfDay = d3.csv("yahoo.csv", d => ({
+        date: new Date(d.Timestamp * 1000),
+        volume: Number(d.volume),
+        high: Number(d.high),
+        low: Number(d.low),
+        open: Number(d.open),
+        close: Number(d.close)
+    }));
+    loadDataEndOfDay.then(data => {
+    const xExtent = fc.extentDate()
+        .accessors([d => d.date]);
+    const yExtent = fc.extentLinear()
+        .pad([0.1, 0.1])
+        .accessors([d => d.high, d => d.low]);
+
+    const lineSeries = fc
+        .seriesSvgLine()
+        .mainValue(d => d.high)
+        .crossValue(d => d.date);
+
+    const areaSeries = fc
+        .seriesSvgArea()
+        .baseValue(d => yExtent(data)[0])
+        .mainValue(d => d.high)
+        .crossValue(d => d.date);
+
+        const gridlines = fc
+            .annotationSvgGridline()
+            .yTicks(5)
+            .xTicks(0);
+
+        const multi = fc.seriesSvgMulti()
+            .series([gridlines, areaSeries, lineSeries]);
+        const chart = fc
+            .chartCartesian(d3.scaleTime(), d3.scaleLinear())
+            .yOrient("right")
+            .yDomain(yExtent(data))
+            .xDomain(xExtent(data))
+            .svgPlotArea(multi);
+
+    d3.select("#chart-element")
+        .datum(data)
+        .call(chart);
+    });
+</script>
+</body>
+</html>
